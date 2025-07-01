@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthTest extends TestCase
 {
@@ -122,8 +123,12 @@ class AuthTest extends TestCase
 
     public function test_user_can_logout()
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('test-token')->plainTextToken;
+        $user = User::factory()->create([
+            'email' => 'john@example.com',
+            'password' => bcrypt('password123')
+        ]);
+
+        $token = \PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth::fromUser($user);
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
@@ -138,8 +143,12 @@ class AuthTest extends TestCase
 
     public function test_user_can_get_profile()
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('test-token')->plainTextToken;
+        $user = User::factory()->create([
+            'email' => 'john@example.com',
+            'password' => bcrypt('password123')
+        ]);
+
+        $token = \PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth::fromUser($user);
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token,
@@ -164,8 +173,12 @@ class AuthTest extends TestCase
 
     public function test_user_can_update_profile()
     {
-        $user = User::factory()->create();
-        $token = $user->createToken('test-token')->plainTextToken;
+        $user = User::factory()->create([
+            'email' => 'john@example.com',
+            'password' => bcrypt('password123')
+        ]);
+
+        $token = \PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth::fromUser($user);
 
         $updateData = [
             'name' => 'Updated Name',
@@ -189,6 +202,32 @@ class AuthTest extends TestCase
         ]);
     }
 
+    public function test_user_can_refresh_token()
+    {
+        $user = User::factory()->create([
+            'email' => 'john@example.com',
+            'password' => bcrypt('password123')
+        ]);
+
+        $token = \PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth::fromUser($user);
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/api/auth/refresh');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'status',
+                'message',
+                'data' => [
+                    'token'
+                ]
+            ]);
+
+        // Verify the new token is different
+        $this->assertNotEquals($token, $response->json('data.token'));
+    }
+
     public function test_unauthenticated_user_cannot_access_protected_routes()
     {
         $response = $this->getJson('/api/auth/profile');
@@ -199,5 +238,33 @@ class AuthTest extends TestCase
 
         $response = $this->postJson('/api/auth/logout');
         $response->assertStatus(401);
+
+        $response = $this->postJson('/api/auth/refresh');
+        $response->assertStatus(401);
     }
-} 
+
+    public function test_expired_token_returns_proper_error()
+    {
+        // Test with an invalid/expired token
+        $invalidToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ0ZXN0IiwiaWF0IjoxNjE2MTYxNjE2LCJleHAiOjE2MTYxNjE2MTYsIm5iZiI6MTYxNjE2MTYxNiwic3ViIjoxLCJqdGkiOiJ0ZXN0IiwibmFtZSI6IkpvaG4gRG9lIiwiZW1haWwiOiJqb2huQGV4YW1wbGUuY29tIiwicm9sZSI6ImNvbnN1bWVyIn0.invalid_signature';
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $invalidToken,
+        ])->getJson('/api/auth/profile');
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => 'Could not decode token: Error while decoding from Base64Url, invalid base64 characters detected'
+            ]);
+    }
+
+    public function test_missing_token_returns_proper_error()
+    {
+        $response = $this->getJson('/api/auth/profile');
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'message' => 'Token not provided'
+            ]);
+    }
+}
