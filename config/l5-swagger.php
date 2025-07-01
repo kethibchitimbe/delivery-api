@@ -170,6 +170,12 @@ return [
         */
         'securityDefinitions' => [
             'securitySchemes' => [
+                'bearerAuth' => [ // Name it as you like
+                    'type' => 'http',
+                    'description' => 'Enter JWT token in format: Bearer {token}',
+                    'scheme' => 'bearer',
+                    'bearerFormat' => 'JWT',
+                ],
                 /*
                  * Examples of Security schemes
                  */
@@ -229,6 +235,7 @@ return [
 
                     'passport' => []
                     */
+                    'bearerAuth' => []
                 ],
             ],
         ],

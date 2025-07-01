@@ -17,6 +17,7 @@ class DeliveryController extends Controller
      * @OA\Get(
      *     path="/api/deliveries",
      *     summary="Get all deliveries",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Deliveries"},
      *     @OA\Response(
      *         response=200,
@@ -34,6 +35,7 @@ class DeliveryController extends Controller
      * @OA\Post(
      *     path="/api/deliveries",
      *     summary="Create a new delivery",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Deliveries"},
      *     @OA\RequestBody(
      *         required=true,
@@ -71,6 +73,7 @@ class DeliveryController extends Controller
      * @OA\Get(
      *     path="/api/deliveries/{id}",
      *     summary="Get a specific delivery",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Deliveries"},
      *     @OA\Parameter(
      *         name="id",
@@ -99,6 +102,7 @@ class DeliveryController extends Controller
      * @OA\Put(
      *     path="/api/deliveries/{id}",
      *     summary="Update a delivery",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Deliveries"},
      *     @OA\Parameter(
      *         name="id",
@@ -144,6 +148,7 @@ class DeliveryController extends Controller
      * @OA\Delete(
      *     path="/api/deliveries/{id}",
      *     summary="Delete a delivery",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Deliveries"},
      *     @OA\Parameter(
      *         name="id",

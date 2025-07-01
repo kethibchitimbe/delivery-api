@@ -17,6 +17,7 @@ class MenuController extends Controller
      * @OA\Get(
      *     path="/api/menus",
      *     summary="Get all menu items",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Menus"},
      *     @OA\Response(
      *         response=200,
@@ -34,6 +35,7 @@ class MenuController extends Controller
      * @OA\Post(
      *     path="/api/menus",
      *     summary="Create a new menu item",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Menus"},
      *     @OA\RequestBody(
      *         required=true,
@@ -75,6 +77,7 @@ class MenuController extends Controller
      * @OA\Get(
      *     path="/api/menus/{id}",
      *     summary="Get a specific menu item",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Menus"},
      *     @OA\Parameter(
      *         name="id",
@@ -103,6 +106,7 @@ class MenuController extends Controller
      * @OA\Put(
      *     path="/api/menus/{id}",
      *     summary="Update a menu item",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Menus"},
      *     @OA\Parameter(
      *         name="id",
@@ -152,6 +156,7 @@ class MenuController extends Controller
      * @OA\Delete(
      *     path="/api/menus/{id}",
      *     summary="Delete a menu item",
+     *     security={{"bearerAuth":{}}},
      *     tags={"Menus"},
      *     @OA\Parameter(
      *         name="id",

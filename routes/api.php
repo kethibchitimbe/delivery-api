@@ -45,7 +45,7 @@ Route::prefix('auth')->group(function () {
 Route::apiResource('restaurants', \App\Http\Controllers\RestaurantController::class);
 
 // Menu Routes
-Route::apiResource('menus', \App\Http\Controllers\MenuController::class);
+Route::middleware('jwt.auth')->apiResource('menus', \App\Http\Controllers\MenuController::class);
 
 // Order Routes
 Route::apiResource('orders', \App\Http\Controllers\OrderController::class);
@@ -54,7 +54,7 @@ Route::apiResource('orders', \App\Http\Controllers\OrderController::class);
 Route::apiResource('order-items', \App\Http\Controllers\OrderItemController::class);
 
 // Delivery Routes
-Route::apiResource('deliveries', \App\Http\Controllers\DeliveryController::class);
+Route::middleware('jwt.auth')->apiResource('deliveries', \App\Http\Controllers\DeliveryController::class);
 
 // Review Routes
 Route::apiResource('reviews', \App\Http\Controllers\ReviewController::class);
