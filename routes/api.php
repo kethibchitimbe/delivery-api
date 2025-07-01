@@ -29,6 +29,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Authentication Routes
+Route::prefix('auth')->group(function () {
+    Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
+    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+        Route::get('/profile', [\App\Http\Controllers\AuthController::class, 'profile']);
+        Route::put('/profile', [\App\Http\Controllers\AuthController::class, 'updateProfile']);
+    });
+});
+
 // Restaurant Routes
 Route::apiResource('restaurants', \App\Http\Controllers\RestaurantController::class);
 
